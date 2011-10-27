@@ -12,6 +12,7 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.List;
 
 /**
  * @author Kohsuke Kawaguchi
@@ -30,6 +31,36 @@ public class JiraScraper {
         if (owner!=null)
             f.getInputByName("componentLead").setValueAttribute(owner);
         checkError((HtmlPage) f.submit());
+    }
+
+    public enum DefaultAssignee {
+        PROJECT_DEFAULT,
+        COMPONENT_LEAD,
+        PROJECT_LEAD,
+        UNASSIGNED
+    }
+
+    public void setDefaultAssignee(String projectId, String component, DefaultAssignee assignee) throws Exception {
+        WebClient wc = createAuthenticatedSession();
+
+        HtmlPage rsp = wc.getPage("http://issues.jenkins-ci.org/secure/project/SelectComponentAssignees!default.jspa?projectId=" + projectId);
+        List<HtmlElement> rows = rsp.selectNodes("//TABLE[@class='grid']//TR");   // [TD[1]='COMPONENTNAME'] somehow doesn't work any more. how come?
+
+        for (HtmlElement row : rows) {
+            String caption = ((HtmlElement)row.selectSingleNode("TD[1]")).getTextContent();
+            if (caption.equals(component)) {
+                // figure out the name field
+                HtmlElement r = (HtmlElement)row.selectSingleNode(".//INPUT[@type='radio']");
+                String name = r.getAttribute("name");
+
+                HtmlForm f = rsp.getFormByName("jiraform");
+                f.getInputByName(name).setValueAttribute(String.valueOf(assignee.ordinal()));
+                checkError((HtmlPage)f.submit());
+                return;
+            }
+        }
+
+        throw new IOException("Unable to find component "+component+" in the issue tracker");
     }
 
     /**
