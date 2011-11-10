@@ -12,23 +12,14 @@
   <name>JIRA Scraper</name>
   <description>
     This complements JIRA SOAP API by offering operations that's not available in JIRA API.
+    (But now it's just a thin wrapper around JIRA REST API.)
   </description>
 
   <dependencies>
     <dependency>
-      <groupId>dom4j</groupId>
-      <artifactId>dom4j</artifactId>
-      <version>1.6.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci</groupId>
-      <artifactId>htmlunit</artifactId>
-      <version>2.6-jenkins-6</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>1.4</version>
+      <groupId>com.atlassian.jira</groupId>
+      <artifactId>jira-rest-java-client</artifactId>
+      <version>0.4</version>
     </dependency>
   </dependencies>
 
@@ -48,6 +39,10 @@
     <repository>
       <id>m.g.o-public</id>
       <url>http://maven.glassfish.org/content/groups/public/</url>
+    </repository>
+    <repository>
+      <id>atlassian-public</id>
+      <url>https://maven.atlassian.com/content/repositories/atlassian-public/</url>
     </repository>
   </repositories>
 </project>
