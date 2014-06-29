@@ -65,6 +65,18 @@ public class JiraScraper {
         BasicComponent c = getBasicComponent(projectKey, oldName);
         Component comp = getComponent(c);
         
+        // Check the existance of the new component
+        BasicComponent newComponent = null;
+        try {
+            newComponent = getBasicComponent(projectKey, newName);
+        } catch (IOException cannotFindTheComponent) {
+            // All is OK
+        }
+        if (newComponent != null) {
+            throw new IOException("Unable to rename component " + oldName + 
+                    ". Component " + newName + " already exists");
+        }
+        
         AssigneeInfo info = comp.getAssigneeInfo();
         AssigneeType assigneeType = info != null ? info.getAssigneeType() : null;
         BasicUser leadUser = info != null ? info.getAssignee() : null;
