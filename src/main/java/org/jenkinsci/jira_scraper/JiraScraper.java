@@ -51,6 +51,23 @@ public class JiraScraper {
         throw new IOException("Unable to find component "+component+" in the issue tracker");
     }
     
+    /**
+     * Removes the default assignee (or project lead) from the specified component.
+     * @since 1.4
+     */
+    public void removeDefaultAssignee(String projectId, String component, AssigneeType assignee) throws IOException {
+        for (BasicComponent c : restClient.getProjectClient().getProject(projectId,pm).getComponents()) {
+            if (c.getName().equals(component)) {
+                Component comp = restClient.getComponentClient().getComponent(c.getSelf(),pm);
+                ComponentInput ci = new ComponentInput(component,c.getDescription(),null,assignee);
+                restClient.getComponentClient().updateComponent(c.getSelf(), ci, pm);
+                return;
+            }
+        }
+        
+        throw new IOException("Unable to find component "+component+" in the issue tracker");
+    }
+    
     // test
     public static void main(String[] args) throws Exception {
         JiraScraper js = new JiraScraper();
