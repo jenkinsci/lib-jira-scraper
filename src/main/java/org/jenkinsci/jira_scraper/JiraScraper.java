@@ -42,7 +42,7 @@ public class JiraScraper {
      * @param deletedComponentName Name of the component to be deleted
      * @param backupComponentName Existing issues will be moved to this component
      * @throws IOException Missing components
-     * @since TODO: define the version
+     * @since 1.4
      */
     public void deleteComponent(String projectKey, String deletedComponentName, String backupComponentName)
         throws IOException {
@@ -58,7 +58,7 @@ public class JiraScraper {
      * @param oldName Name of the component to be renamed
      * @param newName New name to be set
      * @throws IOException Cannot find the initial component or the new name is exist 
-     * @since TODO: define the version
+     * @since 1.4
      */
     public void renameComponent(String projectKey, String oldName, String newName) 
             throws IOException {     
@@ -105,6 +105,7 @@ public class JiraScraper {
      * @param component Component name
      * @return The requested component
      * @throws IOException Component cannot be found
+     * @since 1.4
      */
     private @Nonnull BasicComponent getBasicComponent (String projectId, String component) 
         throws IOException {
@@ -126,16 +127,9 @@ public class JiraScraper {
      * @since 1.4
      */
     public void removeDefaultAssignee(String projectId, String component, AssigneeType assignee) throws IOException {
-        for (BasicComponent c : restClient.getProjectClient().getProject(projectId,pm).getComponents()) {
-            if (c.getName().equals(component)) {
-                Component comp = restClient.getComponentClient().getComponent(c.getSelf(),pm);
-                ComponentInput ci = new ComponentInput(component,c.getDescription(),null,assignee);
-                restClient.getComponentClient().updateComponent(c.getSelf(), ci, pm);
-                return;
-            }
-        }
-        
-        throw new IOException("Unable to find component "+component+" in the issue tracker");
+        Component c = getComponent(getBasicComponent(projectId, component));
+        ComponentInput ci = new ComponentInput(component,c.getDescription(),null,assignee);
+        restClient.getComponentClient().updateComponent(c.getSelf(), ci, pm);
     }
     
     // test
