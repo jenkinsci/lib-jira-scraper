@@ -124,7 +124,7 @@ public class JiraScraper {
     
     /**
      * Removes the default assignee (or project lead) from the specified component.
-     * @since 1.4
+     * @since 1.5
      */
     public void removeDefaultAssignee(String projectId, String component, AssigneeType assignee) throws IOException {
         Component c = getComponent(getBasicComponent(projectId, component));
