@@ -132,6 +132,19 @@ public class JiraScraper {
         restClient.getComponentClient().updateComponent(c.getSelf(), ci, pm);
     }
     
+    /**
+     * Sets the component description.
+     * External commands are responsible to trim inputs, there's specific 
+     * pre-validation of the command
+     * @param description Component description. Null value removes the description
+     * @since 1.5
+     */
+    public void setComponentDescription(String projectId, String component, String description) throws IOException {
+        Component c = getComponent(getBasicComponent(projectId, component));
+        ComponentInput ci = new ComponentInput(component,description,c.getLead().getName(), AssigneeType.COMPONENT_LEAD);
+        restClient.getComponentClient().updateComponent(c.getSelf(), ci, pm);
+    }
+    
     // test
     public static void main(String[] args) throws Exception {
         JiraScraper js = new JiraScraper();
