@@ -3,17 +3,29 @@ package org.jenkinsci.jira_scraper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
+ * Stores JIRA connection credentials for {@link JiraScraper}.
  * @author Kohsuke Kawaguchi
  */
 public class ConnectionInfo {
+    
     public String userName,password;
+    
     public ConnectionInfo() throws IOException {
-        File f = new File(new File(System.getProperty("user.home")),".jenkins-ci.org");
+        this(new File(new File(System.getProperty("user.home")),".jenkins-ci.org"));
+    }
+    
+    /*package*/ ConnectionInfo(File f) throws IOException {
         Properties prop = new Properties();
-        prop.load(new FileInputStream(f));
+        InputStream propInputStream = new FileInputStream(f);
+        try {
+            prop.load(propInputStream);
+        } finally {
+            propInputStream.close();
+        }
         userName = prop.getProperty("userName");
         password = prop.getProperty("password");
     }
